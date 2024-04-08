@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Previsão de tempo</title>
+</head>
+<body>
+    
+    <h1>Previsão do Tempo</h1>
+
+    <form onsubmit="return false;">
+        <label for="city">Digite o nome da cidade:</label>
+        <input type="text" id="city">
+        <button onclick="buscarClima()">Pesquisar</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        function buscarClima() {
+            const cidade = document.getElementById('city').value;
+
+            fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=55781a7fb9db4e146261fe24805532fb&units=metric`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.cod === '404') {
+                        document.getElementById('resultado').innerHTML = `<p>Cidade não encontrada.</p>`;
+                    } else {
+                        const temperatura = data.main.temp;
+                        const umidade = data.main.humidity;
+                        const descricao = data.weather[0].description;
+
+                        document.getElementById('resultado').innerHTML = `
+                            <p>Cidade: ${cidade}</p>
+                            <p>Temperatura: ${temperatura}°C</p>
+                            <p>Umidade: ${umidade}%</p>
+                            <p>Descrição: ${descricao}</p>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar clima:', error);
+                    document.getElementById('resultado').innerHTML = `<p>Ocorreu um erro ao buscar o clima. Tente novamente mais tarde.</p>`;
+                });
+        }
+    </script>
+
+</body>
+</html>
